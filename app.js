@@ -18,6 +18,8 @@ app.get('/', (req, res) => {
 const backendPlayers = {}
 const backendProjectiles ={}
 const SPEED = 15
+const RADIUS = 10
+const PROJECTILE_RADIUS = 5
 let projectileId = 0
 
 io.on('connection', (socket) => {
@@ -25,13 +27,25 @@ io.on('connection', (socket) => {
   backendPlayers[socket.id] ={
     x: 500 * Math.random(),
     y: 500 * Math.random(),
-    radius: 10,
+    radius: RADIUS,
     color: `hsl(${360 * Math.random()},85%, 50%)`,
-    sequenceNumber: 0
+    sequenceNumber: 0, 
+    score: 0
     
   }
   //broadcast to all players
   io.emit('updatePlayers', backendPlayers)
+
+  socket.on('initCanvas', ({width, height, devicePixelRatio}) => {
+    backendPlayers[socket.id].canvas = {
+      width, 
+      height
+    }
+    // backendPlayers[socket.id].radius = RADIUS
+    // if(devicePixelRatio > 1){
+    //   backendPlayers[socket.id].radius = 2 * RADIUS
+    // }
+  })
 
   socket.on('shoot', ({x, y, angle}) => {
     projectileId++;
@@ -72,12 +86,40 @@ io.on('connection', (socket) => {
   })
   console.log(backendPlayers)
 })
-
+//ticker
 setInterval(() => {
   //update projectiles
   for (const id in backendProjectiles) {
     backendProjectiles[id].x += backendProjectiles[id].velocity.x
     backendProjectiles[id].y += backendProjectiles[id].velocity.y
+    const PROJECTILE_RADIUS = 5
+    if (backendProjectiles[id].x - PROJECTILE_RADIUS >= backendPlayers[backendProjectiles[id].playerId]?.canvas?.width ||
+      backendProjectiles[id].x + PROJECTILE_RADIUS <= 0 || 
+      backendProjectiles[id].y - PROJECTILE_RADIUS >= backendPlayers[backendProjectiles[id].playerId]?.canvas?.height ||
+      backendProjectiles[id].y + PROJECTILE_RADIUS <= 0
+
+    ){
+      delete backendProjectiles[id]
+    continue;
+    }
+    for (const playerId in backendPlayers) {
+      const backendPlayer = backendPlayers[playerId]
+      
+      const DISTANCE = Math.hypot(
+        backendProjectiles[id].x - backendPlayer.x,
+        backendProjectiles[id].y - backendPlayer.y
+      )
+      // collision detect
+      if (DISTANCE < PROJECTILE_RADIUS + backendPlayer.radius && 
+        backendProjectiles[id].playerId !== playerId){
+          if(backendPlayers[backendProjectiles[id].playerId])
+            backendPlayers[backendProjectiles[id].playerId].score++
+        delete backendProjectiles[id]
+        delete backendPlayers[playerId]
+        break
+      }
+    }
+      
   }
   io.emit('updateProjectiles', backendProjectiles)
   io.emit('updatePlayers', backendPlayers)

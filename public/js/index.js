@@ -15,6 +15,11 @@ const y = canvas.height * .5
 
 const frontendPlayers = {}
 const frontendProjectiles = {}
+
+socket.on('connect', () => {
+  socket.emit('initCanvas', { width: canvas.width, height: canvas.height, devicePixelRatio })
+})
+
 socket.on('updateProjectiles', (backendProjectiles) => {
   for (const id in backendProjectiles) {
     const backendProjectile = backendProjectiles[id]
@@ -32,6 +37,11 @@ socket.on('updateProjectiles', (backendProjectiles) => {
       frontendProjectiles[id].y += backendProjectiles[id].velocity.y
     }
   }
+  for (const frontendProjectileId in frontendProjectiles) {
+    if (!backendProjectiles[frontendProjectileId]) {
+      delete frontendProjectiles[frontendProjectileId]
+    }
+  }
 })
 //info from backend to frontend player
 socket.on('updatePlayers', (backendPlayers) => {
@@ -45,10 +55,30 @@ socket.on('updatePlayers', (backendPlayers) => {
         radius: backendPlayer.radius, 
         color: backendPlayer.color
       })
+      document.querySelector('#playerLabels').innerHTML += `<div data-id="${id}" data-score="${backendPlayer.score}">${id}: ${backendPlayer.score}</div>`
     } else {
-      if (id === socket.id) {
+      document.querySelector(`div[data-id="${id}"]`).innerHTML = `${id}: ${backendPlayer.score}`
+      document.querySelector(`div[data-id="${id}"]`).setAttribute('data-score', backendPlayer.score)
       
-        // if player already exists
+      const parentDiv = document.querySelector('#playerLabels')
+      const childDivs = Array.from(parentDiv.querySelectorAll('div'))
+
+      childDivs.sort((a, b) => {
+        const scoreA = Number(a.getAttribute('data-score'))
+        const scoreB = Number(b.getAttribute('data-score'))
+        return scoreB - scoreA
+      })
+
+      childDivs.forEach(div => {
+        parentDiv.removeChild(div)
+      })
+      childDivs.forEach(div => {
+        parentDiv.appendChild(div)
+      })
+
+      
+      if (id === socket.id) {
+              // if player already exists
         frontendPlayers[id].x = backendPlayer.x
         frontendPlayers[id].y = backendPlayer.y
 
@@ -75,9 +105,12 @@ socket.on('updatePlayers', (backendPlayers) => {
       }
     }
   }
-
+  //delete frontend player
   for (const id in frontendPlayers) {
     if (!backendPlayers[id]) {
+
+      const divToDelete = document.querySelector(`div[data-id="${id}"]`)
+      divToDelete.parentNode.removeChild(divToDelete)
       delete frontendPlayers[id]
     }
   }
