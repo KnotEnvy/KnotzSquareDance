@@ -16,10 +16,6 @@ const y = canvas.height * .5
 const frontendPlayers = {}
 const frontendProjectiles = {}
 
-socket.on('connect', () => {
-  socket.emit('initCanvas', { width: canvas.width, height: canvas.height, devicePixelRatio })
-})
-
 socket.on('updateProjectiles', (backendProjectiles) => {
   for (const id in backendProjectiles) {
     const backendProjectile = backendProjectiles[id]
@@ -55,9 +51,9 @@ socket.on('updatePlayers', (backendPlayers) => {
         radius: backendPlayer.radius, 
         color: backendPlayer.color
       })
-      document.querySelector('#playerLabels').innerHTML += `<div data-id="${id}" data-score="${backendPlayer.score}">${id}: ${backendPlayer.score}</div>`
+      document.querySelector('#playerLabels').innerHTML += `<div data-id="${id}" data-score="${backendPlayer.score}">${backendPlayer.username}: ${backendPlayer.score}</div>`
     } else {
-      document.querySelector(`div[data-id="${id}"]`).innerHTML = `${id}: ${backendPlayer.score}`
+      document.querySelector(`div[data-id="${id}"]`).innerHTML = `${backendPlayer.username}: ${backendPlayer.score}`
       document.querySelector(`div[data-id="${id}"]`).setAttribute('data-score', backendPlayer.score)
       
       const parentDiv = document.querySelector('#playerLabels')
@@ -111,6 +107,10 @@ socket.on('updatePlayers', (backendPlayers) => {
 
       const divToDelete = document.querySelector(`div[data-id="${id}"]`)
       divToDelete.parentNode.removeChild(divToDelete)
+
+      if (id === socket.id){
+        document.querySelector('#usernameForm').style.display = 'block'
+      }
       delete frontendPlayers[id]
     }
   }
@@ -223,4 +223,16 @@ window.addEventListener('keyup', (e) => {
       keys.d.pressed = false
       break
   }
+})
+
+document.querySelector('#usernameForm').addEventListener('submit', (e) => {
+  event.preventDefault()
+  document.querySelector('#usernameForm').style.display = 'none'
+  socket.emit('initGame', {
+    username: document.querySelector('#usernameInput').value,
+    width: canvas.width, 
+    height: canvas.height, 
+    devicePixelRatio
+    
+    })
 })

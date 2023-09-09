@@ -1,9 +1,22 @@
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knotz Square Dance</title>
     <style>
       body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
         margin: 0;
+        background: #94a3b8;
       }
+
+      input::placeholder {
+        color: #94a3b8;
+      }
+
       canvas {
         width: 100%;
         height: 100%;
@@ -19,7 +32,7 @@
         font-family: sans-serif;
         font-size: 14px;
         user-select: none;
-        background: rgba(0,0,0, .7);
+        background: rgba(185, 11, 201, 0.3);
       "
     >
       <div style="margin-bottom: 8px;">Leaderboard</div>
@@ -28,6 +41,53 @@
       </div>
     </div>
     <canvas></canvas>
+    <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+        "
+      >
+        <form id="usernameForm">
+          <div>
+            <input
+              id="usernameInput"
+              type="text"
+              placeholder="Username"
+              style="
+                padding: 12px;
+                border-radius: 20px;
+                border: none;
+                background: #634769;
+                color: #cbd5e1;
+              "
+            />
+          </div>
+          <div style="text-align: center; margin-top: 8px">
+            <button
+              style="
+                padding: 8px 20px;
+                border-radius: 100px;
+                border: none;
+                background-image: linear-gradient(
+                  to right,
+                  rgb(213, 49, 238),
+                  rgb(133, 9, 168)
+                );
+                color: white;
+                cursor: pointer;
+              "
+            >
+              Start!
+            </button>
+          </div>
+        </form>
+      </div>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.2/gsap.min.js"
