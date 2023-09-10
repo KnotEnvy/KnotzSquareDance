@@ -17,8 +17,9 @@ app.get('/', (req, res) => {
 
 const backendPlayers = {}
 const backendProjectiles ={}
-const SPEED = 15
+const SPEED = 5
 const RADIUS = 10
+const PROJECTILE_RADIUS = 5
 
 let projectileId = 0
 
@@ -44,11 +45,10 @@ io.on('connection', (socket) => {
     }
   })
 
-  socket.on('initGame', ({username, width, height, devicePixelRatio}) => {
+  socket.on('initGame', ({username, width, height}) => {
     backendPlayers[socket.id] ={
-      x: 500 * Math.random(),
-      y: 500 * Math.random(),
-      radius: RADIUS,
+      x: 1024 * Math.random(),
+      y: 576 * Math.random(),
       color: `hsl(${360 * Math.random()},85%, 50%)`,
       sequenceNumber: 0, 
       score: 0,
@@ -56,12 +56,9 @@ io.on('connection', (socket) => {
     }
     backendPlayers[socket.id].canvas = {
       width, 
-      height
+      height,
     }
-    // backendPlayers[socket.id].radius = RADIUS
-    // if(devicePixelRatio > 1){
-    //   backendPlayers[socket.id].radius = 2 * RADIUS
-    // }
+    backendPlayers[socket.id].radius = RADIUS
   })
 
   socket.on('disconnect', (reason) => {
@@ -71,6 +68,10 @@ io.on('connection', (socket) => {
   })
 
   socket.on('keydown', ({ keycode, sequenceNumber }) =>{
+    const backendPlayer = backendPlayers[socket.id]
+
+    if (!backendPlayers[socket.id]) return
+    
     backendPlayers[socket.id].sequenceNumber = sequenceNumber
     switch(keycode) {
       case 'KeyW':
@@ -86,8 +87,22 @@ io.on('connection', (socket) => {
         backendPlayers[socket.id].x += SPEED
         break
     }
+    const playerSides = {
+      left: backendPlayer.x - backendPlayer.radius,
+      right: backendPlayer.x + backendPlayer.radius,
+      top: backendPlayer.y - backendPlayer.radius,
+      bottom: backendPlayer.y + backendPlayer.radius
+    }
+    if (playerSides.left < 0) backendPlayers[socket.id].x = backendPlayer.radius
+
+    if (playerSides.right > 1024)
+      backendPlayers[socket.id].x = 1024 - backendPlayer.radius
+
+    if (playerSides.top < 0) backendPlayers[socket.id].y = backendPlayer.radius
+
+    if (playerSides.bottom > 576)
+      backendPlayers[socket.id].y = 576 - backendPlayer.radius  
   })
-  console.log(backendPlayers)
 })
 //ticker
 setInterval(() => {
@@ -95,7 +110,7 @@ setInterval(() => {
   for (const id in backendProjectiles) {
     backendProjectiles[id].x += backendProjectiles[id].velocity.x
     backendProjectiles[id].y += backendProjectiles[id].velocity.y
-    const PROJECTILE_RADIUS = 5
+
     if (backendProjectiles[id].x - PROJECTILE_RADIUS >= backendPlayers[backendProjectiles[id].playerId]?.canvas?.width ||
       backendProjectiles[id].x + PROJECTILE_RADIUS <= 0 || 
       backendProjectiles[id].y - PROJECTILE_RADIUS >= backendPlayers[backendProjectiles[id].playerId]?.canvas?.height ||
