@@ -44,36 +44,22 @@
       </div>
       <canvas></canvas>
 
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-        "
-      >
+      <body style="margin: 0; height: 100vh; font-family: 'Arial', sans-serif; background: linear-gradient(45deg, #6C5B7B, #355C7D); display: flex; align-items: center; justify-content: center;">
+    <div id="game-container" style="text-align: center; background: rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+        <div id="game-title">Knotz Square Dance</div>
+        <div id="game-teaser">Join the dance and dominate the floor!</div>
         <form id="usernameForm">
-          <div>
-            <input
-              id="usernameInput"
-              type="text"
-              placeholder="Username"
-              style="
+            <div>
+                <input id="usernameInput" placeholder="Username" style="
                 padding: 12px;
                 border-radius: 20px;
                 border: none;
                 background: #634769;
                 color: #cbd5e1;
-              "
-            />
-          </div>
-          <div style="text-align: center; margin-top: 8px">
-            <button
-              style="
+                padding: 12px; border-radius: 20px; border: none; width: 250px; outline: none; transition: transform 0.2s;" type="text"/>
+            </div>
+            <div style="text-align: center; margin-top: 8px">
+                <button style="
                 padding: 8px 20px;
                 border-radius: 100px;
                 border: none;
@@ -84,14 +70,11 @@
                 );
                 color: white;
                 cursor: pointer;
-              "
-            >
-              Start!
-            </button>
-          </div>
+                padding: 8px 20px; border-radius: 100px; border: none; background-image: linear-gradient(to right, rgb(213, 49, 238), rgb(133, 9, 168)); color: white; cursor: pointer; margin-top: 20px; transition: transform 0.2s;">Start!</button>
+            </div>
         </form>
-      </div>
     </div>
+</body>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.2/gsap.min.js"
