@@ -133,10 +133,6 @@ function animate() {
     const frontendProjectile = frontendProjectiles[id]
     frontendProjectile.draw()
   }
-  // for (let i= frontendProjectiles.length -1; i >= 0; i--) {
-  //   const frontendProjectile = frontendProjectiles[i]
-  //   frontendProjectile.update()
-  // }
 }
 
 animate()
@@ -164,25 +160,21 @@ setInterval(() => {
   if (keys.w.pressed) {
     sequenceNumber++
     playerInputs.push({ sequenceNumber, dx: 0, dy: -SPEED })
-    // frontendPlayers[socket.id].y -= SPEED
     socket.emit('keydown', { keycode: 'KeyW', sequenceNumber})
   }
   if (keys.a.pressed) {
     sequenceNumber++
     playerInputs.push({ sequenceNumber, dx: -SPEED, dy: 0 })
-    // frontendPlayers[socket.id].x -= SPEED
     socket.emit('keydown', { keycode: 'KeyA', sequenceNumber})
   }
   if (keys.s.pressed) {
     sequenceNumber++
     playerInputs.push({ sequenceNumber, dx: 0, dy: SPEED })
-    // frontendPlayers[socket.id].x -= SPEED
     socket.emit('keydown', { keycode: 'KeyS', sequenceNumber})
   }
   if (keys.d.pressed) {
     sequenceNumber++
     playerInputs.push({ sequenceNumber, dx: SPEED, dy: 0 })
-    // frontendPlayers[socket.id].x -= SPEED
     socket.emit('keydown', { keycode: 'KeyD', sequenceNumber})
   }
 }, 15)

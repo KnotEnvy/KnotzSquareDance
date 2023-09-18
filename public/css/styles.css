@@ -59,3 +59,62 @@ button:hover {
 button:active {
     transform: scale(0.95);
 }
+/* Responsive styles */
+@media only screen and (max-width: 768px) {
+    body {
+        font-size: 0.9em;
+    }
+
+    #game-container {
+        padding: 20px;
+    }
+
+    #game-title {
+        font-size: 2em;
+    }
+
+    #game-teaser {
+        font-size: 0.9em;
+    }
+
+    #usernameInput {
+        width: 200px;
+    }
+}
+
+/* Chat System Styles */
+#chat-container {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+#chat-messages {
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.chat-message {
+    margin: 5px 0;
+    color: white;
+    font-size: 0.9em;
+    word-wrap: break-word;
+}
+
+#chat-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
