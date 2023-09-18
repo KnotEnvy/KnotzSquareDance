@@ -156,7 +156,7 @@ const keys= {
   }
 }
 
-const SPEED = 10
+const SPEED = 5
 const playerInputs = []
 let sequenceNumber = 0
 
